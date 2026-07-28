@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soren Neupane — Content Writer &amp; Tutor</title>
+<meta name="description" content="Soren Neupane — content writer, tutor, and literary translator working between Nepali and English.">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #e6e6e6;
+    --accent: #2f5d50;
+    --bg: #fdfdfc;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+
+  nav {
+    position: sticky; top: 0;
+    background: rgba(253,253,252,0.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+    z-index: 10;
+  }
+  nav .wrap {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 1rem; padding-bottom: 1rem;
+  }
+  nav .name { font-weight: bold; letter-spacing: 0.02em; }
+  nav ul { display: flex; gap: 1.5rem; list-style: none; }
+  nav a {
+    color: var(--muted); text-decoration: none;
+    font-size: 0.9rem; font-family: 'Helvetica Neue', Arial, sans-serif;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--accent); }
+
+  header.hero { padding: 6rem 0 5rem; }
+  .hero h1 { font-size: 2.6rem; font-weight: normal; margin-bottom: 0.75rem; }
+  .hero p.tagline { font-size: 1.2rem; color: var(--muted); font-style: italic; }
+
+  section { padding: 3.5rem 0; border-top: 1px solid var(--line); }
+  h2 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.8rem; text-transform: uppercase;
+    letter-spacing: 0.15em; color: var(--accent);
+    margin-bottom: 1.75rem; font-weight: 600;
+  }
+
+  .item { margin-bottom: 2rem; }
+  .item:last-child { margin-bottom: 0; }
+  .item h3 { font-size: 1.15rem; font-weight: bold; margin-bottom: 0.35rem; }
+  .item p { color: var(--muted); }
+
+  .contact a {
+    color: var(--accent); text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    font-size: 1.1rem;
+  }
+  .contact a:hover { opacity: 0.7; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 2rem 0 3rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  @media (max-width: 520px) {
+    .hero h1 { font-size: 2rem; }
+    nav ul { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="name">Soren Neupane</span>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="about">
+  <div class="wrap">
+    <h1>Soren Neupane</h1>
+    <p class="tagline">Content writer &amp; tutor</p>
+  </div>
+</header>
+
+<section id="work">
+  <div class="wrap">
+    <h2>Work</h2>
+    <div class="item">
+      <h3>Tutor</h3>
+      <p>Teaching and mentoring students in writing and language.</p>
+    </div>
+    <div class="item">
+      <h3>Journalist</h3>
+      <p>Reporting and long-form writing.</p>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <h2>Selected Projects</h2>
+    <div class="item">
+      <h3>Pippi Longstocking Translation</h3>
+      <p>Translation of Astrid Lindgren's classic children's novel.</p>
+    </div>
+    <div class="item">
+      <h3>Nepalese Literary Translations</h3>
+      <p>Ongoing translations of Nepali literature.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <h2>Contact</h2>
+    <p><a href="mailto:soren.neupane@gmail.com">soren.neupane@gmail.com</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">© 2026 Soren Neupane</div>
+</footer>
+
+</body>
+</html>
