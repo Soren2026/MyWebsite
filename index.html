@@ -44,9 +44,18 @@
   }
   nav a:hover { color: var(--accent); }
 
-  header.hero { padding: 6rem 0 5rem; }
+  header.hero { padding: 5rem 0 4rem; }
+  .hero .wrap {
+    display: flex; align-items: center; gap: 2.5rem;
+    justify-content: space-between;
+  }
   .hero h1 { font-size: 2.6rem; font-weight: normal; margin-bottom: 0.75rem; }
   .hero p.tagline { font-size: 1.2rem; color: var(--muted); font-style: italic; }
+  .hero img.portrait {
+    width: 180px; height: 180px; object-fit: cover; object-position: top;
+    border-radius: 50%; border: 1px solid var(--line);
+    flex-shrink: 0;
+  }
 
   section { padding: 3.5rem 0; border-top: 1px solid var(--line); }
   h2 {
@@ -79,6 +88,8 @@
   @media (max-width: 520px) {
     .hero h1 { font-size: 2rem; }
     nav ul { gap: 1rem; }
+    .hero .wrap { flex-direction: column-reverse; align-items: flex-start; gap: 1.75rem; }
+    .hero img.portrait { width: 140px; height: 140px; }
   }
 </style>
 </head>
@@ -98,8 +109,11 @@
 
 <header class="hero" id="about">
   <div class="wrap">
-    <h1>Soren Neupane</h1>
-    <p class="tagline">Content writer &amp; tutor</p>
+    <div>
+      <h1>Soren Neupane</h1>
+      <p class="tagline">Content writer &amp; tutor</p>
+    </div>
+    <img class="portrait" src="soren.jpg" alt="Portrait of Soren Neupane">
   </div>
 </header>
 
