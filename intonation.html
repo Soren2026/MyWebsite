@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nepali Intonation Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f8fafc; --panel:#ffffff; --ink:#0f172a; --muted:#64748b;
+    --line:#e2e8f0; --accent:#2563eb; --accent-soft:#dbeafe;
+    --ink-contour:#0f172a;
+    --green:#059669; --red:#dc2626; --amber:#d97706; --violet:#7c3aed;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Inter','Noto Sans Devanagari',system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); min-height:100vh;
+  }
+  .dev{font-family:'Noto Sans Devanagari','Inter',sans-serif}
+
+  header.topbar{
+    display:flex; justify-content:space-between; align-items:center; gap:1rem;
+    padding:.7rem 1.2rem; background:var(--panel); border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:20;
+  }
+  .brand{font-weight:700; font-size:1.05rem; letter-spacing:-.01em; display:flex; align-items:center; gap:.5rem}
+  .brand .dot{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed)}
+  .top-actions{display:flex; gap:.5rem}
+
+  button{
+    font-family:inherit; font-size:.85rem; font-weight:600;
+    border:1px solid var(--line); background:var(--panel); color:var(--ink);
+    padding:.45rem .8rem; border-radius:8px; cursor:pointer;
+    transition:background .15s, border-color .15s, transform .05s;
+  }
+  button:hover{background:#f1f5f9; border-color:#cbd5e1}
+  button:active{transform:scale(.97)}
+  button.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  button.primary:hover{background:#1d4ed8}
+  button.play{background:var(--green); border-color:var(--green); color:#fff}
+  button.play:hover{background:#047857}
+  button.danger{color:var(--red)}
+  button.small{padding:.25rem .55rem; font-size:.75rem; border-radius:6px}
+
+  main{max-width:1100px; margin:0 auto; padding:1rem 1.2rem 3rem}
+  .panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding: .8rem 1rem; margin-bottom:.9rem;
+  }
+  .row{display:flex; gap:.6rem; align-items:center; flex-wrap:wrap}
+  .row + .row{margin-top:.6rem}
+  label.small{font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
+
+  input[type=text], select{
+    font-family:'Inter','Noto Sans Devanagari',sans-serif; font-size:1rem;
+    padding:.5rem .7rem; border:1px solid var(--line); border-radius:8px;
+    background:#fff; color:var(--ink); min-width:0;
+  }
+  input[type=text]:focus, select:focus{outline:2px solid var(--accent-soft); border-color:var(--accent)}
+  #sentenceInput{flex:1 1 320px; font-size:1.15rem}
+  #contourLabel{flex:0 1 220px}
+
+  .graph-wrap{position:relative; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:.5rem .5rem .2rem; margin-bottom:.9rem;
+    box-shadow:0 1px 3px rgba(15,23,42,.05)}
+  svg#graph{display:block; width:100%; height:auto; touch-action:none; user-select:none; border-radius:10px}
+  svg text{user-select:none}
+
+  .preset-btn{border-width:2px}
+  .preset-btn[data-p=falling]{border-color:#fca5a5}
+  .preset-btn[data-p=rising]{border-color:#93c5fd}
+  .preset-btn[data-p=risefall]{border-color:#c4b5fd}
+  .preset-btn[data-p=fallrise]{border-color:#fcd34d}
+  .preset-btn[data-p=flat]{border-color:#cbd5e1}
+
+  #contourList{display:flex; flex-direction:column; gap:.45rem; margin-top:.5rem}
+  .contour-item{
+    display:flex; align-items:center; gap:.6rem; padding:.45rem .6rem;
+    border:1px solid var(--line); border-radius:9px; background:#fdfdfd; flex-wrap:wrap;
+  }
+  .contour-item.editing{outline:2px solid var(--accent-soft); border-color:var(--accent)}
+  .swatch{width:22px; height:8px; border-radius:4px; flex-shrink:0}
+  .contour-item .name{font-weight:600; font-size:.92rem; flex:1 1 auto; min-width:120px}
+  .eye{font-size:1rem; background:none; border:none; padding:.15rem .3rem; cursor:pointer; opacity:.85}
+  .eye.off{opacity:.25}
+
+  .hint{font-size:.8rem; color:var(--muted); margin-top:.3rem; line-height:1.5}
+  .empty{font-size:.85rem; color:var(--muted); font-style:italic; padding:.4rem 0}
+
+  #legend{display:none}
+
+  /* ---------- Presentation mode ---------- */
+  body.presenting{background:#fff; overflow:hidden}
+  body.presenting header.topbar,
+  body.presenting .panel,
+  body.presenting .hint{display:none}
+  body.presenting main{max-width:none; padding:0; height:100vh; display:flex; flex-direction:column; justify-content:center}
+  body.presenting .graph-wrap{border:none; box-shadow:none; margin:0; padding:1vh 2vw}
+  body.presenting #legend{
+    display:flex; gap:2.2rem; justify-content:center; align-items:center;
+    padding:.6rem 1rem; flex-wrap:wrap;
+  }
+  .legend-item{display:flex; align-items:center; gap:.6rem; font-size:1.35rem; font-weight:600; cursor:pointer}
+  .legend-item .swatch{width:34px; height:10px}
+  .legend-item:hover{opacity:.75}
+  .legend-note{font-size:.8rem; color:var(--muted); width:100%; text-align:center}
+  #exitPresent{
+    display:none; position:fixed; top:14px; right:16px; z-index:50; opacity:.6;
+  }
+  #presentPlay{display:none; position:fixed; top:14px; left:16px; z-index:50}
+  body.presenting #exitPresent{display:block}
+  body.presenting #presentPlay{display:block}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span class="dot"></span> Nepali Intonation Studio</div>
+  <div class="top-actions">
+    <button id="playBtn" class="play">&#9654; Play contour</button>
+    <button id="presentBtn" class="primary">&#128250; Present</button>
+  </div>
+</header>
+
+<button id="exitPresent">&#10005; Exit (Esc)</button>
+<button id="presentPlay" class="play">&#9654; Play</button>
+
+<main>
+
+  <section class="panel">
+    <div class="row">
+      <input type="text" id="sentenceInput" class="dev"
+        placeholder="Type a sentence — Devanagari or roman script (use - to mark syllables yourself)">
+      <button id="setSentenceBtn" class="primary">Set sentence</button>
+    </div>
+    <div class="row">
+      <label class="small">Library:</label>
+      <select id="sentenceSelect"><option value="">— saved sentences —</option></select>
+      <button id="deleteSentenceBtn" class="danger small">Delete sentence</button>
+      <span style="flex:1"></span>
+      <button id="exportBtn" class="small">&#8681; Export JSON</button>
+      <button id="importBtn" class="small">&#8679; Import JSON</button>
+      <input type="file" id="importFile" accept=".json" style="display:none">
+    </div>
+  </section>
+
+  <div class="graph-wrap">
+    <svg id="graph" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="legend"></div>
+  </div>
+
+  <section class="panel">
+    <div class="row">
+      <label class="small">Presets:</label>
+      <button class="preset-btn" data-p="falling">&#8600; Falling</button>
+      <button class="preset-btn" data-p="rising">&#8599; Rising</button>
+      <button class="preset-btn" data-p="risefall">&#8963; Rise–Fall</button>
+      <button class="preset-btn" data-p="fallrise">&#8964; Fall–Rise</button>
+      <button class="preset-btn" data-p="flat">&#8212; Flat</button>
+      <span style="flex:1"></span>
+      <button id="clearBtn">Clear points</button>
+    </div>
+    <div class="row">
+      <input type="text" id="contourLabel" placeholder="Label, e.g. Question">
+      <button id="saveBtn" class="primary">&#128190; Save</button>
+      <button id="saveNewBtn">Save as new</button>
+      <span id="editingBadge" style="font-size:.78rem;color:var(--muted)"></span>
+    </div>
+    <p class="hint">
+      <b>Click</b> the graph to add a point &nbsp;·&nbsp; <b>drag</b> points up/down &nbsp;·&nbsp;
+      <b>double-click</b> a point to remove it &nbsp;·&nbsp; presets place one point per syllable.
+    </p>
+  </section>
+
+  <section class="panel">
+    <div class="row" style="justify-content:space-between">
+      <label class="small">Saved contours for this sentence</label>
+      <span class="hint" style="margin:0">&#128065; = show on graph (overlay to compare)</span>
+    </div>
+    <div id="contourList"></div>
+  </section>
+
+</main>
+
+<script>
+'use strict';
+/* ================= state ================= */
+const PALETTE = ['#2563eb','#dc2626','#059669','#d97706','#7c3aed','#0891b2','#db2777','#4d7c0f'];
+const LS_KEY = 'nepaliIntonationDB_v1';
+let db = {sentences:[], activeId:null};
+let memoryOnly = false;
+
+function loadDB(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw) db = JSON.parse(raw);
+  }catch(e){ memoryOnly = true; }
+}
+function saveDB(){
+  if(memoryOnly) return;
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(db)); }catch(e){ memoryOnly = true; }
+}
+const uid = () => Math.random().toString(36).slice(2,10);
+const activeSentence = () => db.sentences.find(s=>s.id===db.activeId) || null;
+
+/* ================= syllable splitting ================= */
+function isDevanagari(t){ return /[ऀ-ॿ]/.test(t); }
+
+function splitDevWord(word){
+  const chars=[...word], out=[]; let cur='';
+  const attach=/[ऀ-ःऺ-़ा-्॑-ॗॢॣ]/; // matras, virama, nukta, nasals
+  for(let i=0;i<chars.length;i++){
+    cur+=chars[i];
+    if(chars[i]==='्') continue;              // virama joins next consonant
+    const nxt=chars[i+1];
+    if(nxt && attach.test(nxt)) continue;          // keep matra/modifier with this syllable
+    out.push(cur); cur='';
+  }
+  if(cur) out.push(cur);
+  return out;
+}
+function splitRomanWord(word){
+  const m = word.match(/[^aeiouāīūAEIOU]*[aeiouāīūAEIOU]+/g);
+  if(!m) return [word];
+  const used = m.join('').length;
+  if(used < word.length) m[m.length-1]+=word.slice(used);
+  return m;
+}
+function splitSentence(text){
+  text=text.trim();
+  if(!text) return [];
+  if(text.includes('-')){                          // manual override
+    return text.split(/\s+/).flatMap(w=>w.split('-')).filter(Boolean);
+  }
+  return text.split(/\s+/).flatMap(w=>{
+    const bare=w.replace(/[।?!,.;:"'()]/g,'');
+    if(!bare) return [];
+    return isDevanagari(bare)? splitDevWord(bare) : splitRomanWord(bare);
+  });
+}
+
+/* ================= graph geometry ================= */
+const svg = document.getElementById('graph');
+const VB={w:1000,h:560}, M={l:70,r:30,t:30,b:110};
+const PW=VB.w-M.l-M.r, PH=VB.h-M.t-M.b;
+const nx2px = x => M.l + x*PW;
+const ny2py = y => M.t + (1-y)*PH;
+const px2nx = px => Math.min(1,Math.max(0,(px-M.l)/PW));
+const py2ny = py => Math.min(1,Math.max(0,1-(py-M.t)/PH));
+
+function svgPoint(evt){
+  const pt=svg.createSVGPoint(); pt.x=evt.clientX; pt.y=evt.clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+function catmullRomPath(pts){
+  if(pts.length<2) return '';
+  const p=pts.map(n=>({x:nx2px(n.x), y:ny2py(n.y)}));
+  let d=`M ${p[0].x} ${p[0].y}`;
+  for(let i=0;i<p.length-1;i++){
+    const p0=p[i-1]||p[i], p1=p[i], p2=p[i+1], p3=p[i+2]||p2;
+    const c1x=p1.x+(p2.x-p0.x)/6, c1y=p1.y+(p2.y-p0.y)/6;
+    const c2x=p2.x-(p3.x-p1.x)/6, c2y=p2.y-(p3.y-p1.y)/6;
+    d+=` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2.x} ${p2.y}`;
+  }
+  return d;
+}
+
+/* ================= rendering ================= */
+function el(name,attrs){ const e=document.createElementNS('http://www.w3.org/2000/svg',name);
+  for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
+
+function render(){
+  const s=activeSentence();
+  const syl = s? s.syllables : [];
+  const presenting = document.body.classList.contains('presenting');
+  svg.innerHTML='';
+
+  // plot background
+  svg.appendChild(el('rect',{x:M.l,y:M.t,width:PW,height:PH,fill:'#fbfdff',stroke:'#e2e8f0',rx:8}));
+
+  // horizontal grid + labels
+  const rows=[['High',.92],['Mid',.5],['Low',.08]];
+  for(const [name,y] of rows){
+    svg.appendChild(el('line',{x1:M.l,x2:M.l+PW,y1:ny2py(y),y2:ny2py(y),
+      stroke:'#e2e8f0','stroke-dasharray':'4 6'}));
+    const t=el('text',{x:M.l-12,y:ny2py(y)+5,'text-anchor':'end',fill:'#94a3b8',
+      'font-size':presenting?20:15,'font-weight':600}); t.textContent=name; svg.appendChild(t);
+  }
+
+  // syllable lanes + labels
+  const n=syl.length;
+  for(let i=0;i<n;i++){
+    const cx=M.l+PW*(i+.5)/n;
+    if(i>0) svg.appendChild(el('line',{x1:M.l+PW*i/n,x2:M.l+PW*i/n,y1:M.t,y2:M.t+PH,
+      stroke:'#f1f5f9'}));
+    const hasDev=isDevanagari(syl[i]);
+    const t=el('text',{x:cx,y:VB.h-40,'text-anchor':'middle',fill:'#0f172a',
+      'font-size': presenting? (hasDev?46:40) : (hasDev?34:28),
+      'font-weight':600,'font-family':"'Noto Sans Devanagari','Inter',sans-serif"});
+    t.textContent=syl[i]; svg.appendChild(t);
+  }
+  if(!n){
+    const t=el('text',{x:VB.w/2,y:VB.h/2,'text-anchor':'middle',fill:'#94a3b8','font-size':22});
+    t.textContent='Type a sentence above and press “Set sentence”'; svg.appendChild(t);
+  }
+
+  // saved visible contours (overlay)
+  if(s) for(const c of s.contours){
+    if(!c.visible || c.id===editingContourId) continue;
+    drawContour(c.nodes, c.color, false, presenting);
+  }
+  // editing contour on top
+  if(s) drawContour(s.draft, editColor(), true, presenting);
+
+  renderLegend();
+}
+function editColor(){
+  if(editingContourId){
+    const c=activeSentence()?.contours.find(c=>c.id===editingContourId);
+    if(c) return c.color;
+  }
+  return '#0f172a';
+}
+function drawContour(nodes,color,editable,presenting){
+  const sorted=[...nodes].sort((a,b)=>a.x-b.x);
+  const path=catmullRomPath(sorted);
+  if(path) svg.appendChild(el('path',{d:path,fill:'none',stroke:color,
+    'stroke-width':presenting?7:5,'stroke-linecap':'round',opacity:editable?1:.85}));
+  sorted.forEach(nd=>{
+    const c=el('circle',{cx:nx2px(nd.x),cy:ny2py(nd.y),
+      r: editable? (presenting?11:13) : (presenting?8:7),
+      fill: editable? '#fff':color, stroke:color,'stroke-width':editable?4:0,
+      style: editable&&!presenting?'cursor:grab':''});
+    if(editable&&!presenting){ c.dataset.nid=nd.id; c.classList.add('node'); }
+    svg.appendChild(c);
+  });
+}
+function renderLegend(){
+  const s=activeSentence(), box=document.getElementById('legend');
+  box.innerHTML='';
+  if(!s) return;
+  const items=s.contours.filter(c=>c.visible);
+  for(const c of items){
+    const d=document.createElement('div'); d.className='legend-item';
+    d.innerHTML=`<span class="swatch" style="background:${c.color}"></span>${escapeHtml(c.label)}`;
+    d.title='Click to play'; d.onclick=()=>playNodes(c.nodes);
+    box.appendChild(d);
+  }
+  if(items.length){
+    const n=document.createElement('div'); n.className='legend-note';
+    n.textContent='click a label to hear its melody';
+    box.appendChild(n);
+  }
+}
+
+/* ================= editing interactions ================= */
+let editingContourId=null;
+let dragId=null, downAt=null;
+
+svg.addEventListener('pointerdown', e=>{
+  if(document.body.classList.contains('presenting')) return;
+  const s=activeSentence(); if(!s) return;
+  const p=svgPoint(e);
+  const tgt=e.target.closest?.('.node') || (e.target.classList?.contains('node')? e.target:null);
+  if(tgt){ dragId=tgt.dataset.nid; }
+  else if(p.x>=M.l&&p.x<=M.l+PW&&p.y>=M.t&&p.y<=M.t+PH){
+    const nd={id:uid(), x:px2nx(p.x), y:py2ny(p.y)};
+    s.draft.push(nd); dragId=nd.id; persistDraft();
+  }
+  if(dragId){ svg.setPointerCapture(e.pointerId); downAt=Date.now(); render(); }
+});
+svg.addEventListener('pointermove', e=>{
+  if(!dragId) return;
+  const s=activeSentence(); if(!s) return;
+  const nd=s.draft.find(n=>n.id===dragId); if(!nd) return;
+  const p=svgPoint(e);
+  nd.x=px2nx(p.x); nd.y=py2ny(p.y);
+  render();
+});
+svg.addEventListener('pointerup', ()=>{ if(dragId){ dragId=null; persistDraft(); } });
+svg.addEventListener('dblclick', e=>{
+  if(document.body.classList.contains('presenting')) return;
+  const s=activeSentence(); if(!s) return;
+  const t=e.target;
+  if(t.classList?.contains('node')){
+    s.draft=s.draft.filter(n=>n.id!==t.dataset.nid);
+    persistDraft(); render();
+  }
+});
+function persistDraft(){ saveDB(); }
+
+/* ================= presets ================= */
+const PRESETS={
+  falling: i=>0.82-0.62*i,
+  rising:  i=>0.22+0.62*i,
+  risefall:i=>0.25+0.65*Math.sin(Math.PI*Math.min(1,i*1.15)),
+  fallrise:i=>0.8-0.55*Math.sin(Math.PI*Math.min(1,i*1.15)),
+  flat:    ()=>0.5
+};
+document.querySelectorAll('.preset-btn').forEach(b=>b.onclick=()=>{
+  const s=activeSentence(); if(!s){alert('Set a sentence first.');return;}
+  const n=Math.max(2, s.syllables.length);
+  const f=PRESETS[b.dataset.p];
+  s.draft=Array.from({length:n},(_,i)=>{
+    const frac = s.syllables.length? (i+.5)/n : i/(n-1);
+    return {id:uid(), x:frac, y:Math.min(.95,Math.max(.05,f(i/(n-1))))};
+  });
+  persistDraft(); render();
+});
+document.getElementById('clearBtn').onclick=()=>{
+  const s=activeSentence(); if(!s) return;
+  s.draft=[]; persistDraft(); render();
+};
+
+/* ================= sentences ================= */
+function setSentence(){
+  const text=document.getElementById('sentenceInput').value.trim();
+  if(!text) return;
+  let s=db.sentences.find(x=>x.text===text);
+  if(!s){
+    s={id:uid(), text, syllables:splitSentence(text), contours:[], draft:[]};
+    db.sentences.push(s);
+  }
+  db.activeId=s.id; editingContourId=null;
+  saveDB(); refreshSentenceSelect(); renderContourList(); render();
+}
+document.getElementById('setSentenceBtn').onclick=setSentence;
+document.getElementById('sentenceInput').addEventListener('keydown',e=>{if(e.key==='Enter')setSentence();});
+
+function refreshSentenceSelect(){
+  const sel=document.getElementById('sentenceSelect');
+  sel.innerHTML='<option value="">— saved sentences —</option>';
+  for(const s of db.sentences){
+    const o=document.createElement('option'); o.value=s.id; o.textContent=s.text;
+    if(s.id===db.activeId) o.selected=true;
+    sel.appendChild(o);
+  }
+}
+document.getElementById('sentenceSelect').onchange=e=>{
+  if(!e.target.value) return;
+  db.activeId=e.target.value; editingContourId=null;
+  document.getElementById('sentenceInput').value=activeSentence().text;
+  saveDB(); renderContourList(); render();
+};
+document.getElementById('deleteSentenceBtn').onclick=()=>{
+  const s=activeSentence(); if(!s) return;
+  if(!confirm(`Delete “${s.text}” and all its contours?`)) return;
+  db.sentences=db.sentences.filter(x=>x.id!==s.id);
+  db.activeId=db.sentences[0]?.id||null; editingContourId=null;
+  document.getElementById('sentenceInput').value=activeSentence()?.text||'';
+  saveDB(); refreshSentenceSelect(); renderContourList(); render();
+};
+
+/* ================= saved contours ================= */
+function nextColor(s){ return PALETTE[s.contours.length % PALETTE.length]; }
+
+function saveContour(asNew){
+  const s=activeSentence(); if(!s){alert('Set a sentence first.');return;}
+  if(s.draft.length<2){alert('Add at least two points before saving.');return;}
+  const label=document.getElementById('contourLabel').value.trim()
+    || (editingContourId&&!asNew ? null : `Pattern ${s.contours.length+1}`);
+  if(editingContourId && !asNew){
+    const c=s.contours.find(c=>c.id===editingContourId);
+    if(c){ c.nodes=JSON.parse(JSON.stringify(s.draft)); if(label) c.label=label; }
+  }else{
+    s.contours.push({id:uid(), label:label||`Pattern ${s.contours.length+1}`,
+      color:nextColor(s), visible:true, nodes:JSON.parse(JSON.stringify(s.draft))});
+    editingContourId=s.contours[s.contours.length-1].id;
+  }
+  saveDB(); renderContourList(); render(); flashBadge('Saved ✓');
+}
+document.getElementById('saveBtn').onclick=()=>saveContour(false);
+document.getElementById('saveNewBtn').onclick=()=>saveContour(true);
+function flashBadge(msg){
+  const b=document.getElementById('editingBadge'); b.textContent=msg;
+  setTimeout(()=>updateBadge(),1400);
+}
+function updateBadge(){
+  const s=activeSentence();
+  const c=s?.contours.find(c=>c.id===editingContourId);
+  document.getElementById('editingBadge').textContent = c? `editing: ${c.label}` : '';
+}
+
+function escapeHtml(t){ return t.replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
+
+function renderContourList(){
+  const s=activeSentence(), box=document.getElementById('contourList');
+  box.innerHTML='';
+  if(!s||!s.contours.length){
+    box.innerHTML='<div class="empty">No saved contours yet — draw a curve and press Save.</div>';
+    updateBadge(); return;
+  }
+  for(const c of s.contours){
+    const d=document.createElement('div');
+    d.className='contour-item'+(c.id===editingContourId?' editing':'');
+    d.innerHTML=`
+      <button class="eye ${c.visible?'':'off'}" title="Show / hide on graph">&#128065;</button>
+      <span class="swatch" style="background:${c.color}"></span>
+      <span class="name dev">${escapeHtml(c.label)}</span>
+      <button class="small act-play play" title="Play melody">&#9654;</button>
+      <button class="small act-edit">Edit</button>
+      <button class="small act-ren">Rename</button>
+      <button class="small danger act-del">Delete</button>`;
+    d.querySelector('.eye').onclick=()=>{c.visible=!c.visible; saveDB(); renderContourList(); render();};
+    d.querySelector('.act-play').onclick=()=>playNodes(c.nodes);
+    d.querySelector('.act-edit').onclick=()=>{
+      editingContourId=c.id;
+      s.draft=JSON.parse(JSON.stringify(c.nodes));
+      document.getElementById('contourLabel').value=c.label;
+      saveDB(); renderContourList(); render();
+    };
+    d.querySelector('.act-ren').onclick=()=>{
+      const v=prompt('New label:',c.label);
+      if(v){c.label=v.trim()||c.label; saveDB(); renderContourList(); render();}
+    };
+    d.querySelector('.act-del').onclick=()=>{
+      if(!confirm(`Delete contour “${c.label}”?`))return;
+      s.contours=s.contours.filter(x=>x.id!==c.id);
+      if(editingContourId===c.id) editingContourId=null;
+      saveDB(); renderContourList(); render();
+    };
+    box.appendChild(d);
+  }
+  updateBadge();
+}
+
+/* ================= audio playback ================= */
+let audioCtx=null, playAnim=null;
+function yToFreq(y){ return 110*Math.pow(2, 0.4 + y*1.3); } // ~145–360 Hz
+function playNodes(nodes){
+  const s=activeSentence(); if(!s) return;
+  const sorted=[...nodes].sort((a,b)=>a.x-b.x);
+  if(sorted.length<2) return;
+  audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  const dur=Math.max(1.4, s.syllables.length*0.42);
+  const t0=audioCtx.currentTime+0.05;
+  const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+  osc.type='triangle';
+  // frequency follows curve, sampled densely
+  const N=80;
+  for(let i=0;i<=N;i++){
+    const x=sorted[0].x + (sorted[sorted.length-1].x-sorted[0].x)*i/N;
+    osc.frequency[i?'linearRampToValueAtTime':'setValueAtTime'](yToFreq(sampleY(sorted,x)), t0+dur*i/N);
+  }
+  gain.gain.setValueAtTime(0,t0);
+  gain.gain.linearRampToValueAtTime(.28,t0+.06);
+  gain.gain.setValueAtTime(.28,t0+dur-.12);
+  gain.gain.linearRampToValueAtTime(0,t0+dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(t0); osc.stop(t0+dur+.05);
+  animateDot(sorted,dur);
+}
+function sampleY(sorted,x){
+  if(x<=sorted[0].x) return sorted[0].y;
+  for(let i=0;i<sorted.length-1;i++){
+    const a=sorted[i],b=sorted[i+1];
+    if(x<=b.x){ const t=(x-a.x)/Math.max(1e-6,b.x-a.x); return a.y+(b.y-a.y)*t; }
+  }
+  return sorted[sorted.length-1].y;
+}
+function animateDot(sorted,dur){
+  if(playAnim) cancelAnimationFrame(playAnim);
+  const dot=el('circle',{r:16,fill:'#f59e0b',stroke:'#fff','stroke-width':3,opacity:.95});
+  svg.appendChild(dot);
+  const x0=sorted[0].x, x1=sorted[sorted.length-1].x, start=performance.now();
+  (function step(now){
+    const t=Math.min(1,(now-start)/(dur*1000));
+    const x=x0+(x1-x0)*t;
+    dot.setAttribute('cx',nx2px(x)); dot.setAttribute('cy',ny2py(sampleY(sorted,x)));
+    if(t<1) playAnim=requestAnimationFrame(step); else dot.remove();
+  })(start);
+}
+document.getElementById('playBtn').onclick=()=>{const s=activeSentence(); if(s) playNodes(s.draft);};
+document.getElementById('presentPlay').onclick=()=>{const s=activeSentence(); if(s) playNodes(s.draft);};
+
+/* ================= presentation mode ================= */
+function setPresenting(on){
+  document.body.classList.toggle('presenting',on);
+  if(on && document.documentElement.requestFullscreen)
+    document.documentElement.requestFullscreen().catch(()=>{});
+  if(!on && document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  render();
+}
+document.getElementById('presentBtn').onclick=()=>setPresenting(true);
+document.getElementById('exitPresent').onclick=()=>setPresenting(false);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.body.classList.contains('presenting')) setPresenting(false);
+});
+document.addEventListener('fullscreenchange',()=>{
+  if(!document.fullscreenElement&&document.body.classList.contains('presenting'))
+    document.body.classList.remove('presenting'), render();
+});
+
+/* ================= export / import ================= */
+document.getElementById('exportBtn').onclick=()=>{
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='nepali-intonation-contours.json';
+  a.click(); URL.revokeObjectURL(a.href);
+};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const data=JSON.parse(r.result);
+      if(!Array.isArray(data.sentences)) throw 0;
+      let added=0;
+      for(const s of data.sentences){
+        const mine=db.sentences.find(x=>x.text===s.text);
+        if(mine){ for(const c of s.contours){ c.id=uid(); mine.contours.push(c); added++; } }
+        else { s.id=uid(); s.draft=s.draft||[]; db.sentences.push(s); added+=s.contours.length; }
+      }
+      saveDB(); refreshSentenceSelect(); renderContourList(); render();
+      alert(`Imported ${added} contour(s).`);
+    }catch(err){ alert('Could not read that file — is it an exported JSON from this app?'); }
+  };
+  r.readAsText(f); e.target.value='';
+};
+
+/* ================= boot ================= */
+loadDB();
+if(memoryOnly) console.warn('localStorage unavailable — session will not persist.');
+if(!db.activeId && db.sentences.length) db.activeId=db.sentences[0].id;
+if(activeSentence()) document.getElementById('sentenceInput').value=activeSentence().text;
+refreshSentenceSelect(); renderContourList(); render();
+window.addEventListener('resize',render);
+</script>
+</body>
+</html>

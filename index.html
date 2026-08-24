@@ -3,93 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soren Neupane — Content Writer &amp; Tutor</title>
-<meta name="description" content="Soren Neupane — content writer, tutor, and literary translator working between Nepali and English.">
+<title>Soren Neupane — Writer, Tutor, Translator</title>
+<meta name="description" content="Soren Neupane — journalist, tutor, and literary translator working between Nepali and English, based in Wellington.">
 <style>
   :root {
-    --ink: #1a1a1a;
-    --muted: #6b6b6b;
-    --line: #e6e6e6;
-    --accent: #2f5d50;
-    --bg: #fdfdfc;
+    --bg: #0f1115;
+    --panel: #161a21;
+    --ink: #eae6dd;
+    --muted: #8e93a0;
+    --accent: #e0a83e;
+    --line: #262b35;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     background: var(--bg);
     color: var(--ink);
-    line-height: 1.7;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 680px; margin: 0 auto; padding: 0 1.5rem; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+  a { color: var(--accent); }
 
+  /* ---------- Nav ---------- */
   nav {
-    position: sticky; top: 0;
-    background: rgba(253,253,252,0.95);
-    backdrop-filter: blur(6px);
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(15,17,21,0.92);
+    backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
-    z-index: 10;
   }
   nav .wrap {
     display: flex; justify-content: space-between; align-items: center;
     padding-top: 1rem; padding-bottom: 1rem;
   }
-  nav .name { font-weight: bold; letter-spacing: 0.02em; }
-  nav ul { display: flex; gap: 1.5rem; list-style: none; }
-  nav a {
-    color: var(--muted); text-decoration: none;
-    font-size: 0.9rem; font-family: 'Helvetica Neue', Arial, sans-serif;
+  nav .logo {
+    font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+    font-size: 0.95rem;
+  }
+  nav .logo span { color: var(--accent); }
+  nav ul { display: flex; gap: 1.75rem; list-style: none; }
+  nav ul a {
+    color: var(--muted); text-decoration: none; font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 0.08em;
     transition: color 0.2s;
   }
-  nav a:hover { color: var(--accent); }
+  nav ul a:hover { color: var(--accent); }
 
-  header.hero { padding: 5rem 0 4rem; }
+  /* ---------- Hero ---------- */
+  header.hero { padding: 6rem 0 5rem; border-bottom: 1px solid var(--line); }
   .hero .wrap {
-    display: flex; align-items: center; gap: 2.5rem;
-    justify-content: space-between;
+    display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: 3rem; align-items: center;
   }
-  .hero h1 { font-size: 2.6rem; font-weight: normal; margin-bottom: 0.75rem; }
-  .hero p.tagline { font-size: 1.2rem; color: var(--muted); font-style: italic; }
+  .kicker {
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.2em; font-size: 0.75rem; font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    line-height: 1.08; font-weight: 800; letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p.tagline { color: var(--muted); font-size: 1.1rem; max-width: 34rem; }
+  .hero .portrait-frame { position: relative; justify-self: end; }
   .hero img.portrait {
-    width: 180px; height: 180px; object-fit: cover; object-position: top;
-    border-radius: 50%; border: 1px solid var(--line);
-    flex-shrink: 0;
+    width: 260px; height: 300px; object-fit: cover; object-position: top;
+    border-radius: 4px; display: block;
+    filter: saturate(0.9);
+  }
+  .hero .portrait-frame::after {
+    content: ""; position: absolute; inset: 14px -14px -14px 14px;
+    border: 2px solid var(--accent); border-radius: 4px; z-index: -1;
   }
 
-  section { padding: 3.5rem 0; border-top: 1px solid var(--line); }
-  h2 {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.8rem; text-transform: uppercase;
-    letter-spacing: 0.15em; color: var(--accent);
-    margin-bottom: 1.75rem; font-weight: 600;
+  /* ---------- Sections ---------- */
+  section { padding: 4.5rem 0; border-bottom: 1px solid var(--line); }
+  .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 2.5rem; }
+  .sec-head .num {
+    font-size: 0.8rem; color: var(--accent); font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .sec-head h2 {
+    font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em;
+    text-transform: uppercase;
   }
 
-  .item { margin-bottom: 2rem; }
-  .item:last-child { margin-bottom: 0; }
-  .item h3 { font-size: 1.15rem; font-weight: bold; margin-bottom: 0.35rem; }
-  .item p { color: var(--muted); }
-
-  .contact a {
-    color: var(--accent); text-decoration: none;
-    border-bottom: 1px solid var(--accent);
-    font-size: 1.1rem;
+  /* Bio */
+  .bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  .bio-grid p { color: var(--muted); }
+  .bio-grid p strong { color: var(--ink); }
+  .bio-grid p + p { margin-top: 1rem; }
+  .facts {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 6px; padding: 1.75rem; align-self: start;
   }
-  .contact a:hover { opacity: 0.7; }
+  .facts h3 {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--accent); margin-bottom: 1rem;
+  }
+  .facts ul { list-style: none; }
+  .facts li {
+    padding: 0.5rem 0; border-bottom: 1px dashed var(--line);
+    font-size: 0.92rem; color: var(--muted);
+  }
+  .facts li:last-child { border-bottom: none; }
+  .facts li span { color: var(--ink); font-weight: 600; }
+
+  /* Journalism cards */
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 6px; padding: 1.6rem;
+    display: flex; flex-direction: column; gap: 0.6rem;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .card .meta {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--accent); font-weight: 700;
+  }
+  .card h3 { font-size: 1.15rem; line-height: 1.35; }
+  .card h3 a { color: var(--ink); text-decoration: none; }
+  .card h3 a:hover { color: var(--accent); }
+  .card p { color: var(--muted); font-size: 0.95rem; }
+
+  /* Teaching timeline */
+  .timeline { list-style: none; position: relative; padding-left: 1.75rem; }
+  .timeline::before {
+    content: ""; position: absolute; left: 6px; top: 6px; bottom: 6px;
+    width: 2px; background: var(--line);
+  }
+  .timeline li { position: relative; padding-bottom: 2.25rem; }
+  .timeline li:last-child { padding-bottom: 0; }
+  .timeline li::before {
+    content: ""; position: absolute; left: -1.75rem; top: 8px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--bg); border: 3px solid var(--accent);
+  }
+  .timeline .meta {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--accent); font-weight: 700; margin-bottom: 0.2rem;
+  }
+  .timeline h3 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+  .timeline p { color: var(--muted); font-size: 0.95rem; max-width: 44rem; }
+
+  /* Projects */
+  .proj { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+
+  /* Contact */
+  .contact-box { text-align: center; padding: 1rem 0; }
+  .contact-box p { color: var(--muted); margin-bottom: 1.5rem; }
+  .btn {
+    display: inline-block; background: var(--accent); color: #14120b;
+    font-weight: 700; text-decoration: none; letter-spacing: 0.05em;
+    padding: 0.85rem 2rem; border-radius: 4px; text-transform: uppercase;
+    font-size: 0.85rem; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
 
   footer {
-    border-top: 1px solid var(--line);
-    padding: 2rem 0 3rem;
-    color: var(--muted);
-    font-size: 0.85rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    padding: 2.5rem 0; color: var(--muted); font-size: 0.8rem;
+    text-align: center; letter-spacing: 0.05em;
   }
 
-  @media (max-width: 520px) {
-    .hero h1 { font-size: 2rem; }
+  @media (max-width: 760px) {
+    .hero .wrap { grid-template-columns: 1fr; }
+    .hero .portrait-frame { justify-self: start; }
+    .bio-grid, .cards, .proj { grid-template-columns: 1fr; }
     nav ul { gap: 1rem; }
-    .hero .wrap { flex-direction: column-reverse; align-items: flex-start; gap: 1.75rem; }
-    .hero img.portrait { width: 140px; height: 140px; }
+    nav ul a { font-size: 0.75rem; }
   }
 </style>
 </head>
@@ -97,63 +182,132 @@
 
 <nav>
   <div class="wrap">
-    <span class="name">Soren Neupane</span>
+    <span class="logo">Soren <span>Neupane</span></span>
     <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#work">Work</a></li>
+      <li><a href="#bio">Bio</a></li>
+      <li><a href="#journalism">Journalism</a></li>
+      <li><a href="#teaching">Teaching</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </div>
 </nav>
 
-<header class="hero" id="about">
+<header class="hero" id="top">
   <div class="wrap">
     <div>
-      <h1>Soren Neupane</h1>
-      <p class="tagline">Content writer &amp; tutor</p>
+      <p class="kicker">Writer · Tutor · Translator</p>
+      <h1>Stories that travel between <em>Nepali</em> and <em>English</em>.</h1>
+      <p class="tagline">Long-form journalism on Nepal, South Asia, and the diaspora — alongside teaching and literary translation, from Wellington, New Zealand.</p>
     </div>
-    <img class="portrait" src="soren.jpg" alt="Portrait of Soren Neupane">
+    <div class="portrait-frame">
+      <img class="portrait" src="soren.jpg" alt="Portrait of Soren Neupane">
+    </div>
   </div>
 </header>
 
-<section id="work">
+<section id="bio">
   <div class="wrap">
-    <h2>Work</h2>
-    <div class="item">
-      <h3>Tutor</h3>
-      <p>Teaching and mentoring students in writing and language.</p>
+    <div class="sec-head"><span class="num">01</span><h2>Bio</h2></div>
+    <div class="bio-grid">
+      <div>
+        <p><strong>Soren Neupane</strong> grew up in Kathmandu, where an early habit of retelling radio news to his grandparents turned into a lasting fascination with how stories change as they cross languages. He moved to Wellington, New Zealand, where the distance from home sharpened, rather than dulled, his interest in Nepali politics and culture.</p>
+        <p>He has worked as a reporter and columnist for community publications, taught writing and language to students from primary school to adult learners, and translates literature between Nepali and English — most ambitiously, Astrid Lindgren's <em>Pippi Longstocking</em> into Nepali.</p>
+        <p>These days he splits his time between long-form journalism on the Nepali diaspora, weekly tutoring sessions, and a slowly growing shelf of translation drafts.</p>
+      </div>
+      <aside class="facts">
+        <h3>At a glance</h3>
+        <ul>
+          <li><span>Based in</span> — Wellington, New Zealand</li>
+          <li><span>From</span> — Kathmandu, Nepal</li>
+          <li><span>Languages</span> — Nepali, English</li>
+          <li><span>Focus</span> — Journalism, teaching, translation</li>
+          <li><span>Contact</span> — soren.neupane@gmail.com</li>
+        </ul>
+      </aside>
     </div>
-    <div class="item">
-      <h3>Journalist</h3>
-      <p>Reporting and long-form writing.</p>
+  </div>
+</section>
+
+<section id="journalism">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">02</span><h2>Journalism</h2></div>
+    <div class="cards">
+      <article class="card">
+        <p class="meta">YetiNews · March 2026</p>
+        <h3><a href="#">The Long Way Home: What Remittances Really Build</a></h3>
+        <p>A long-form look at how money sent from abroad reshapes villages in mid-hill Nepal — and what it costs the families who send it.</p>
+      </article>
+      <article class="card">
+        <p class="meta">YetiNews · November 2025</p>
+        <h3><a href="#">A Festival in Two Time Zones</a></h3>
+        <p>Dashain celebrated over video calls: how Wellington's Nepali community keeps ritual alive across a six-hour time difference.</p>
+      </article>
+      <article class="card">
+        <p class="meta">The Diaspora Review · July 2025</p>
+        <h3><a href="#">Kids Who Dream in English</a></h3>
+        <p>On heritage-language loss in second-generation Nepali families, and the weekend schools quietly fighting it.</p>
+      </article>
+      <article class="card">
+        <p class="meta">Wellington Quarterly · February 2025</p>
+        <h3><a href="#">The Momo Economy</a></h3>
+        <p>A profile of three immigrant-run kitchens and what a dumpling can tell you about labour, belonging, and rent.</p>
+      </article>
     </div>
+  </div>
+</section>
+
+<section id="teaching">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">03</span><h2>Teaching</h2></div>
+    <ul class="timeline">
+      <li>
+        <p class="meta">Wellington Community Centre · 2024 — present</p>
+        <h3>English Writing Workshop</h3>
+        <p>A weekly small-group workshop for adult migrants, focused on practical writing — emails, CVs, and personal essays — with an emphasis on finding a voice, not just fixing grammar.</p>
+      </li>
+      <li>
+        <p class="meta">Online · 2023 — present</p>
+        <h3>Nepali for Heritage Speakers</h3>
+        <p>One-on-one lessons for second-generation kids and adults who understand Nepali but hesitate to speak it. Built around songs, stories, and family interviews rather than textbooks.</p>
+      </li>
+      <li>
+        <p class="meta">Private tutoring · 2022 — present</p>
+        <h3>Academic Writing &amp; IELTS Preparation</h3>
+        <p>Individual coaching for secondary and university students on essay structure, argument, and exam technique.</p>
+      </li>
+    </ul>
   </div>
 </section>
 
 <section id="projects">
   <div class="wrap">
-    <h2>Selected Projects</h2>
-    <div class="item">
-      <h3>Pippi Longstocking Translation</h3>
-      <p>Translation of Astrid Lindgren's classic children's novel.</p>
-    </div>
-    <div class="item">
-      <h3>Nepalese Literary Translations</h3>
-      <p>Ongoing translations of Nepali literature.</p>
+    <div class="sec-head"><span class="num">04</span><h2>Selected Projects</h2></div>
+    <div class="proj">
+      <article class="card">
+        <p class="meta">Translation · In progress</p>
+        <h3>Pippi Longstocking in Nepali</h3>
+        <p>A full translation of Astrid Lindgren's classic — wrestling Pippi's wordplay and invented compound words into Nepali that children will actually laugh at.</p>
+      </article>
+      <article class="card">
+        <p class="meta">Translation · Ongoing</p>
+        <h3>Nepali Literary Translations</h3>
+        <p>An ongoing series bringing short fiction and poetry from contemporary Nepali writers to English readers.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<section id="contact" class="contact">
-  <div class="wrap">
-    <h2>Contact</h2>
-    <p><a href="mailto:soren.neupane@gmail.com">soren.neupane@gmail.com</a></p>
+<section id="contact">
+  <div class="wrap contact-box">
+    <div class="sec-head" style="justify-content:center"><span class="num">05</span><h2>Contact</h2></div>
+    <p>For commissions, tutoring enquiries, or translation projects.</p>
+    <a class="btn" href="mailto:soren.neupane@gmail.com">Get in touch</a>
   </div>
 </section>
 
 <footer>
-  <div class="wrap">© 2026 Soren Neupane</div>
+  © 2026 Soren Neupane · Wellington, New Zealand
 </footer>
 
 </body>
