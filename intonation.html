@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  /* Theme: use saved choice, else follow the device setting. Runs early so there is no flash. */
+  (function(){var t;try{t=localStorage.getItem('theme');}catch(e){}
+    if(t!=='light'&&t!=='dark'){t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    document.documentElement.setAttribute('data-theme',t);})();
+
+</script>
 <title>Nepali Intonation Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +20,22 @@
     --line:#e2e8f0; --accent:#2563eb; --accent-soft:#dbeafe;
     --ink-contour:#0f172a;
     --green:#059669; --red:#dc2626; --amber:#d97706; --violet:#7c3aed;
+    --hover:#f1f5f9; --hover-line:#cbd5e1; --input-bg:#ffffff; --item-bg:#fdfdfd;
+    --accent-hover:#1d4ed8; --green-hover:#047857;
+    --plot-bg:#fbfdff; --grid:#e2e8f0; --lane:#f1f5f9; --axis-label:#94a3b8;
+    --syllable:#0f172a; --node-fill:#ffffff; --shadow:rgba(15,23,42,.05);
+    color-scheme:light;
+  }
+  [data-theme="dark"]{
+    --bg:#0b1120; --panel:#111827; --ink:#e5e7eb; --muted:#94a3b8;
+    --line:#263244; --accent:#3b82f6; --accent-soft:#1e3a8a;
+    --ink-contour:#e5e7eb;
+    --green:#059669; --red:#f87171; --amber:#f59e0b; --violet:#a78bfa;
+    --hover:#1e293b; --hover-line:#334155; --input-bg:#0b1120; --item-bg:#0f172a;
+    --accent-hover:#2563eb; --green-hover:#047857;
+    --plot-bg:#0d1526; --grid:#263244; --lane:#172033; --axis-label:#64748b;
+    --syllable:#e5e7eb; --node-fill:#111827; --shadow:rgba(0,0,0,.3);
+    color-scheme:dark;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{
@@ -36,12 +59,12 @@
     padding:.45rem .8rem; border-radius:8px; cursor:pointer;
     transition:background .15s, border-color .15s, transform .05s;
   }
-  button:hover{background:#f1f5f9; border-color:#cbd5e1}
+  button:hover{background:var(--hover); border-color:var(--hover-line)}
   button:active{transform:scale(.97)}
   button.primary{background:var(--accent); border-color:var(--accent); color:#fff}
-  button.primary:hover{background:#1d4ed8}
+  button.primary:hover{background:var(--accent-hover)}
   button.play{background:var(--green); border-color:var(--green); color:#fff}
-  button.play:hover{background:#047857}
+  button.play:hover{background:var(--green-hover)}
   button.danger{color:var(--red)}
   button.small{padding:.25rem .55rem; font-size:.75rem; border-radius:6px}
 
@@ -57,7 +80,7 @@
   input[type=text], select{
     font-family:'Inter','Noto Sans Devanagari',sans-serif; font-size:1rem;
     padding:.5rem .7rem; border:1px solid var(--line); border-radius:8px;
-    background:#fff; color:var(--ink); min-width:0;
+    background:var(--input-bg); color:var(--ink); min-width:0;
   }
   input[type=text]:focus, select:focus{outline:2px solid var(--accent-soft); border-color:var(--accent)}
   #sentenceInput{flex:1 1 320px; font-size:1.15rem}
@@ -65,7 +88,7 @@
 
   .graph-wrap{position:relative; background:var(--panel); border:1px solid var(--line);
     border-radius:14px; padding:.5rem .5rem .2rem; margin-bottom:.9rem;
-    box-shadow:0 1px 3px rgba(15,23,42,.05)}
+    box-shadow:0 1px 3px var(--shadow)}
   svg#graph{display:block; width:100%; height:auto; touch-action:none; user-select:none; border-radius:10px}
   svg text{user-select:none}
 
@@ -79,7 +102,7 @@
   #contourList{display:flex; flex-direction:column; gap:.45rem; margin-top:.5rem}
   .contour-item{
     display:flex; align-items:center; gap:.6rem; padding:.45rem .6rem;
-    border:1px solid var(--line); border-radius:9px; background:#fdfdfd; flex-wrap:wrap;
+    border:1px solid var(--line); border-radius:9px; background:var(--item-bg); flex-wrap:wrap;
   }
   .contour-item.editing{outline:2px solid var(--accent-soft); border-color:var(--accent)}
   .swatch{width:22px; height:8px; border-radius:4px; flex-shrink:0}
@@ -93,7 +116,7 @@
   #legend{display:none}
 
   /* ---------- Presentation mode ---------- */
-  body.presenting{background:#fff; overflow:hidden}
+  body.presenting{background:var(--panel); overflow:hidden}
   body.presenting header.topbar,
   body.presenting .panel,
   body.presenting .hint{display:none}
@@ -113,6 +136,21 @@
   #presentPlay{display:none; position:fixed; top:14px; left:16px; z-index:50}
   body.presenting #exitPresent{display:block}
   body.presenting #presentPlay{display:block}
+
+  /* ---------- Theme toggle ---------- */
+  .theme-toggle{
+    background:transparent; border:1px solid var(--line); color:var(--ink);
+    width:36px; height:36px; padding:0; border-radius:50%; cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center;
+    transition:color .2s, border-color .2s, background .2s;
+  }
+  .theme-toggle:hover{color:var(--accent); border-color:var(--accent); background:transparent}
+  .theme-toggle:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .theme-toggle svg{width:18px; height:18px; display:block}
+  .theme-toggle .sun{display:none}
+  [data-theme="dark"] .theme-toggle .sun{display:block}
+  [data-theme="dark"] .theme-toggle .moon{display:none}
+  body{transition:background-color .25s, color .25s}
 </style>
 </head>
 <body>
@@ -120,6 +158,10 @@
 <header class="topbar">
   <div class="brand"><span class="dot"></span> Nepali Intonation Studio</div>
   <div class="top-actions">
+    <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
     <button id="playBtn" class="play">&#9654; Play contour</button>
     <button id="presentBtn" class="primary">&#128250; Present</button>
   </div>
@@ -269,6 +311,7 @@ function catmullRomPath(pts){
 }
 
 /* ================= rendering ================= */
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 function el(name,attrs){ const e=document.createElementNS('http://www.w3.org/2000/svg',name);
   for(const k in attrs) e.setAttribute(k,attrs[k]); return e; }
 
@@ -279,14 +322,14 @@ function render(){
   svg.innerHTML='';
 
   // plot background
-  svg.appendChild(el('rect',{x:M.l,y:M.t,width:PW,height:PH,fill:'#fbfdff',stroke:'#e2e8f0',rx:8}));
+  svg.appendChild(el('rect',{x:M.l,y:M.t,width:PW,height:PH,fill:cssVar('--plot-bg'),stroke:cssVar('--grid'),rx:8}));
 
   // horizontal grid + labels
   const rows=[['High',.92],['Mid',.5],['Low',.08]];
   for(const [name,y] of rows){
     svg.appendChild(el('line',{x1:M.l,x2:M.l+PW,y1:ny2py(y),y2:ny2py(y),
-      stroke:'#e2e8f0','stroke-dasharray':'4 6'}));
-    const t=el('text',{x:M.l-12,y:ny2py(y)+5,'text-anchor':'end',fill:'#94a3b8',
+      stroke:cssVar('--grid'),'stroke-dasharray':'4 6'}));
+    const t=el('text',{x:M.l-12,y:ny2py(y)+5,'text-anchor':'end',fill:cssVar('--axis-label'),
       'font-size':presenting?20:15,'font-weight':600}); t.textContent=name; svg.appendChild(t);
   }
 
@@ -295,15 +338,15 @@ function render(){
   for(let i=0;i<n;i++){
     const cx=M.l+PW*(i+.5)/n;
     if(i>0) svg.appendChild(el('line',{x1:M.l+PW*i/n,x2:M.l+PW*i/n,y1:M.t,y2:M.t+PH,
-      stroke:'#f1f5f9'}));
+      stroke:cssVar('--lane')}));
     const hasDev=isDevanagari(syl[i]);
-    const t=el('text',{x:cx,y:VB.h-40,'text-anchor':'middle',fill:'#0f172a',
+    const t=el('text',{x:cx,y:VB.h-40,'text-anchor':'middle',fill:cssVar('--syllable'),
       'font-size': presenting? (hasDev?46:40) : (hasDev?34:28),
       'font-weight':600,'font-family':"'Noto Sans Devanagari','Inter',sans-serif"});
     t.textContent=syl[i]; svg.appendChild(t);
   }
   if(!n){
-    const t=el('text',{x:VB.w/2,y:VB.h/2,'text-anchor':'middle',fill:'#94a3b8','font-size':22});
+    const t=el('text',{x:VB.w/2,y:VB.h/2,'text-anchor':'middle',fill:cssVar('--axis-label'),'font-size':22});
     t.textContent='Type a sentence above and press “Set sentence”'; svg.appendChild(t);
   }
 
@@ -322,7 +365,7 @@ function editColor(){
     const c=activeSentence()?.contours.find(c=>c.id===editingContourId);
     if(c) return c.color;
   }
-  return '#0f172a';
+  return cssVar('--ink-contour');
 }
 function drawContour(nodes,color,editable,presenting){
   const sorted=[...nodes].sort((a,b)=>a.x-b.x);
@@ -332,7 +375,7 @@ function drawContour(nodes,color,editable,presenting){
   sorted.forEach(nd=>{
     const c=el('circle',{cx:nx2px(nd.x),cy:ny2py(nd.y),
       r: editable? (presenting?11:13) : (presenting?8:7),
-      fill: editable? '#fff':color, stroke:color,'stroke-width':editable?4:0,
+      fill: editable? cssVar('--node-fill'):color, stroke:color,'stroke-width':editable?4:0,
       style: editable&&!presenting?'cursor:grab':''});
     if(editable&&!presenting){ c.dataset.nid=nd.id; c.classList.add('node'); }
     svg.appendChild(c);
@@ -564,7 +607,7 @@ function sampleY(sorted,x){
 }
 function animateDot(sorted,dur){
   if(playAnim) cancelAnimationFrame(playAnim);
-  const dot=el('circle',{r:16,fill:'#f59e0b',stroke:'#fff','stroke-width':3,opacity:.95});
+  const dot=el('circle',{r:16,fill:'#f59e0b',stroke:cssVar('--node-fill'),'stroke-width':3,opacity:.95});
   svg.appendChild(dot);
   const x0=sorted[0].x, x1=sorted[sorted.length-1].x, start=performance.now();
   (function step(now){
@@ -631,6 +674,30 @@ if(!db.activeId && db.sentences.length) db.activeId=db.sentences[0].id;
 if(activeSentence()) document.getElementById('sentenceInput').value=activeSentence().text;
 refreshSentenceSelect(); renderContourList(); render();
 window.addEventListener('resize',render);
+document.addEventListener('themechange', function(){ render(); });
+</script>
+<script>
+  /* Theme toggle */
+  (function(){
+    var root=document.documentElement, btn=document.getElementById('themeToggle');
+    function apply(t,save){
+      root.setAttribute('data-theme',t);
+      var label=t==='dark'?'Switch to light theme':'Switch to dark theme';
+      btn.setAttribute('aria-label',label); btn.title=label;
+      if(save){try{localStorage.setItem('theme',t);}catch(e){}}
+    }
+    apply(root.getAttribute('data-theme')||'light',false);
+    btn.addEventListener('click',function(){
+      apply(root.getAttribute('data-theme')==='dark'?'light':'dark',true);
+      document.dispatchEvent(new Event('themechange'));
+    });
+    if(window.matchMedia){
+      var mq=matchMedia('(prefers-color-scheme: dark)');
+      var onChange=function(e){var s;try{s=localStorage.getItem('theme');}catch(_){}
+        if(s!=='light'&&s!=='dark'){apply(e.matches?'dark':'light',false);document.dispatchEvent(new Event('themechange'));}};
+      if(mq.addEventListener) mq.addEventListener('change',onChange); else if(mq.addListener) mq.addListener(onChange);
+    }
+  })();
 </script>
 </body>
 </html>
